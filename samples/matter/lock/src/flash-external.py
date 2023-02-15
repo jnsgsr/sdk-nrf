@@ -10,10 +10,10 @@ Utility for programming nRF53 application into the external flash
 
 import argparse
 from intelhex import IntelHex
-import os
 import subprocess
 import sys
-import tempfile
+import time
+
 
 # Base address of the memory-mapped QSPI flash on nRF53 SoCs
 NRF53_XIP_REGION_BASE = 0x10000000
@@ -25,17 +25,17 @@ def die(msg):
 
 
 def program(app_data, app_offset, net_data, net_offset, snr):
-    with tempfile.TemporaryDirectory() as outdir:
-        dest_file = os.path.join(outdir, 'external.hex')
+    dest_file = f'external.hex'
 
-        ihex = IntelHex()
-        ihex.putsz(NRF53_XIP_REGION_BASE + app_offset, app_data)
-        ihex.putsz(NRF53_XIP_REGION_BASE + net_offset, net_data)
-        ihex.write_hex_file(dest_file)
+    ihex = IntelHex()
+    ihex.putsz(NRF53_XIP_REGION_BASE + app_offset, app_data)
+    ihex.putsz(NRF53_XIP_REGION_BASE + net_offset, net_data)
+    ihex.write_hex_file(dest_file)
 
-        subprocess.check_call(['nrfjprog', '-s', snr,
-                               '--program', dest_file,
-                               '--reset', '--verify'])
+    subprocess.check_call(['nrfjprog', '-s', snr,
+                           '--program', dest_file,
+                           '--reset', '--verify',
+                           '--log'])
 
 
 def select_board_snr():
