@@ -1,0 +1,45 @@
+common:
+  sysbuild: true
+  build_only: true
+  tags:
+    - mcuboot
+
+tests:
+  # Re-creation of sample.dfu.smp_svr.mcuboot_flags.direct_xip_withrevert for nRF54H20
+  # with CID preserved as in NCS 3.2.0 ("nRF54H20_sample_app") to allow
+  # 3.2.0 MCUboot to validate the upgrade image during backward compatibility testing.
+  sample.dfu.smp_svr.mcuboot_flags.direct_xip_withrevert.nrf54h20.bc:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - SB_CONFIG_NETCORE_IPC_RADIO=y
+      - SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y
+      - EXTRA_CONF_FILE="overlay-bt.conf"
+      - FILE_SUFFIX=merged_slot
+      - SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT=y
+      - mcuboot_CONFIG_MULTITHREADING=y
+
+  # Re-creation of sample.mcumgr.smp_svr.serial_recovery_corrupted_image
+  # based on nrf/samples/dfu/smp_svr with MCUboot serial recovery and
+  # indication LED enabled. Used for backward compatibility testing where
+  # an initial 3.2.0 image is upgraded via MCUboot serial recovery.
+  sample.mcumgr.smp_svr.serial_recovery_corrupted_image.bc:
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    extra_args:
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - mcuboot_CONFIG_MCUBOOT_SERIAL=y
+      - mcuboot_CONFIG_UART_CONSOLE=n
+      - mcuboot_CONFIG_MCUBOOT_INDICATION_LED=y
+      - mcuboot_CONFIG_BOOT_SERIAL_NO_APPLICATION=y
+      - FILE_SUFFIX=larger_mcuboot

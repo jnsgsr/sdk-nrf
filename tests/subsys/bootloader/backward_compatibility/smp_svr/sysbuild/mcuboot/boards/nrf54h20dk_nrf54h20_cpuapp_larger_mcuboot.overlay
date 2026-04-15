@@ -1,0 +1,31 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Increase boot_partition from 64 KiB to 72 KiB
+ * to accommodate MCUboot with serial recovery features enabled.
+ * Shift slot0_partition start accordingly.
+ */
+
+/delete-node/ &cpuapp_boot_partition;
+/delete-node/ &cpuapp_slot0_partition;
+
+&mram1x {
+	partitions {
+		cpuapp_boot_partition: boot_partition: partition@30000 {
+			reg = <0x30000 DT_SIZE_K(72)>;
+		};
+
+		cpuapp_slot0_partition: slot0_partition: partition@42000 {
+			reg = <0x42000 DT_SIZE_K(320)>;
+		};
+	};
+};
+
+/ {
+	chosen {
+		zephyr,code-partition = &boot_partition;
+	};
+};

@@ -1,0 +1,20 @@
+common:
+  sysbuild: true
+  build_only: true
+  tags:
+    - mcuboot
+
+tests:
+  # Re-creation of sample.dfu.compressed_update with Partition Manager enabled
+  # and pm_static files from NCS 3.2.0 (nrf_compress/mcuboot_update sample).
+  # Workaround for the partition layout incompatibility between the 3.2.0
+  # Partition Manager layout and the 3.3.0 DTS-based layout.
+  nrf_compress.mcuboot_update.bc:
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
